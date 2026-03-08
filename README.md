@@ -26,19 +26,26 @@ Das Projekt ist als **MVP (Minimum Viable Product)** aufgebaut und fokussiert au
 ```
 orus/
 │
+├─ README.md
+├─ requirements.txt
+├─ orus.db              # SQLite Datenbank
+│
 ├─ src/
 │  ├─ main.py             # Hauptanwendung (Streamlit Router)
-│  ├─ pages/              # Streamlit-Seiten (Dashboard, Portfolio, ...)
 │  ├─ db.py               # Datenbankfunktionen
 │  ├─ data_client.py      # Laden von Marktdaten
 │  ├─ analytics.py        # Analysefunktionen
-│  └─ config.py           # Konfiguration
-│
-├─ data/
-│  └─ prices.db           # SQLite Datenbank
-│
-├─ requirements.txt       # Python Abhängigkeiten
-└─ README.md
+│  ├─ config.py           # Konfiguration
+│  └─ pages/              # Streamlit-Seiten
+│     ├─ __init__.py
+│     ├─ dashboard.py
+│     ├─ portfolio.py
+│     ├─ holdings.py
+│     ├─ data.py
+│     ├─ weights.py
+│     ├─ rebalancing.py
+│     ├─ analysis.py
+│     └─ common.py
 ```
 
 ---
