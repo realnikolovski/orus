@@ -7,45 +7,44 @@ def connect():
     return sqlite3.connect(DB_PATH)
 
 
-import sqlite3
-
-DB_PATH = "orus.db"
-
-def connect():
-    return sqlite3.connect(DB_PATH)
-
 def init_db():
     with connect() as conn:
-        conn.execute("""
+        conn.execute(
+            """
         CREATE TABLE IF NOT EXISTS prices (
             symbol TEXT NOT NULL,
             date   TEXT NOT NULL,
             close  REAL NOT NULL,
             PRIMARY KEY (symbol, date)
         )
-        """)
+        """
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
         CREATE TABLE IF NOT EXISTS assets (
             symbol TEXT PRIMARY KEY
         )
-        """)
+        """
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
         CREATE TABLE IF NOT EXISTS target_weights (
             symbol TEXT PRIMARY KEY,
             weight_pct REAL NOT NULL
         )
-        """)
+        """
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
         CREATE TABLE IF NOT EXISTS holdings (
             symbol TEXT PRIMARY KEY,
             value_eur REAL NOT NULL
         )
-        """)
-
-
+        """
+        )
 
 
 def save_prices(df):
@@ -69,6 +68,7 @@ def load_prices(symbol):
         )
         return cur.fetchall()
 
+
 def add_asset(symbol):
     symbol = symbol.upper().strip()
     if symbol == "":
@@ -79,6 +79,7 @@ def add_asset(symbol):
             (symbol,),
         )
 
+
 def remove_asset(symbol):
     symbol = symbol.upper().strip()
     with connect() as conn:
@@ -87,11 +88,13 @@ def remove_asset(symbol):
             (symbol,),
         )
 
+
 def load_assets():
     with connect() as conn:
         cur = conn.execute("SELECT symbol FROM assets ORDER BY symbol")
         rows = cur.fetchall()
-    return [r[0] for r in rows]
+    return [row[0] for row in rows]
+
 
 def save_target_weight(symbol, weight_pct):
     symbol = symbol.upper().strip()
@@ -101,11 +104,15 @@ def save_target_weight(symbol, weight_pct):
             (symbol, float(weight_pct)),
         )
 
+
 def load_target_weights():
     with connect() as conn:
-        cur = conn.execute("SELECT symbol, weight_pct FROM target_weights ORDER BY symbol")
+        cur = conn.execute(
+            "SELECT symbol, weight_pct FROM target_weights ORDER BY symbol"
+        )
         rows = cur.fetchall()
-    return {sym: w for sym, w in rows}
+    return dict(rows)
+
 
 def save_holding_value(symbol, value_eur):
     symbol = symbol.upper().strip()
@@ -115,9 +122,9 @@ def save_holding_value(symbol, value_eur):
             (symbol, float(value_eur)),
         )
 
+
 def load_holdings():
     with connect() as conn:
         cur = conn.execute("SELECT symbol, value_eur FROM holdings ORDER BY symbol")
         rows = cur.fetchall()
-    return {sym: v for sym, v in rows}
-
+    return dict(rows)

@@ -27,11 +27,12 @@ Das Projekt ist als **MVP (Minimum Viable Product)** aufgebaut und fokussiert au
 orus/
 │
 ├─ src/
-│  ├─ app.py              # Hauptanwendung (Streamlit)
+│  ├─ main.py             # Hauptanwendung (Streamlit Router)
+│  ├─ pages/              # Streamlit-Seiten (Dashboard, Portfolio, ...)
 │  ├─ db.py               # Datenbankfunktionen
-│  ├─ data_loader.py      # Laden von Marktdaten
+│  ├─ data_client.py      # Laden von Marktdaten
 │  ├─ analytics.py        # Analysefunktionen
-│  └─ utils.py            # Hilfsfunktionen
+│  └─ config.py           # Konfiguration
 │
 ├─ data/
 │  └─ prices.db           # SQLite Datenbank
@@ -56,7 +57,7 @@ Installiert sein müssen:
 Repository klonen:
 
 ```bash
-git clone https://github.com/USERNAME/orus.git
+git clone https://github.com/wrxngdev/orus.git
 cd orus
 ```
 
@@ -65,15 +66,15 @@ Virtuelle Umgebung erstellen (empfohlen):
 Mac / Linux:
 
 ```bash
-python -m venv .venv
+python/python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 Windows:
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate
+python/python3 -m venv .venv
+.venv\Scripts\activate oder .venv\Scripts\activate.ps1
 ```
 
 Abhängigkeiten installieren:
@@ -89,7 +90,7 @@ pip install -r requirements.txt
 Im Projektordner:
 
 ```bash
-streamlit run src/app.py
+streamlit run src/main.py
 ```
 
 Die App startet dann automatisch im Browser unter:
@@ -133,7 +134,7 @@ Empfohlener Ablauf:
 
 # Datenquelle
 
-Die historischen Preisdaten werden über öffentliche Marktdaten geladen.
+Die historischen Preisdaten werden über öffentliche Marktdaten geladen. (In dem Fall wäre das Stooq)
 Die Daten werden lokal in einer **SQLite-Datenbank** gespeichert.
 
 ---
@@ -147,7 +148,7 @@ Dieses Projekt ist ein **Proof-of-Concept / MVP** und dient zur Demonstration vo
 * einfacher Datenanalyse mit Python
 * Entwicklung einer Streamlit-App
 
-Es handelt sich **nicht um eine Finanzberatung**.
+Es handelt sich **nicht um eine Finanzberatung**!.
 
 ---
 
