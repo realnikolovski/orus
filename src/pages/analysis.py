@@ -172,7 +172,11 @@ def render():
     """Analyse-Tab: Auswahl, KPIs und Charts aus den Preisdaten."""
     header("Orus", "Analyse – Entwicklung & Vergleich")
 
-    assets = load_assets()
+    try:
+        assets = load_assets()
+    except RuntimeError as exc:
+        st.error(f"Datenbank nicht lesbar: {exc}")
+        return
     if len(assets) == 0:
         st.info("Keine Assets vorhanden. Gehe zu „Portfolio“ und füge Symbole hinzu.")
         return
@@ -196,7 +200,11 @@ def render():
     kpis = []
 
     for sym in selected:
-        result, error = _load_result_for_symbol(sym, int(days_to_show), int(step))
+        try:
+            result, error = _load_result_for_symbol(sym, int(days_to_show), int(step))
+        except RuntimeError as exc:
+            st.error(f"Datenbank-Fehler für {sym}: {exc}")
+            return
         if error:
             st.warning(error)
             return

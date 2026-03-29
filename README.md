@@ -89,6 +89,8 @@ Im Projektordner:
 streamlit run src/main.py
 ```
 
+Beim ersten Start kann es dauern bis die App startet, da alle Daten geladen werden müssen!
+
 Standard: http://localhost:8501 (Streamlit zeigt den genauen Port an).
 
 ---
