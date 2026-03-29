@@ -5,6 +5,7 @@ from pages.common import header, safe_float
 
 
 def render():
+    """Zielgewichte in % je Asset erfassen und speichern."""
     header("Orus", "Ziel-Verteilung festlegen (Soll)")
 
     assets = load_assets()

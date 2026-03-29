@@ -6,6 +6,7 @@ from pages.common import header
 
 
 def render():
+    """Portfolio-Tab: Assets hinzufügen/entfernen und anzeigen."""
     header("Orus", "Portfolio verwalten (MVP)")
 
     st.subheader("Assets hinzufügen/entfernen")
@@ -18,9 +19,9 @@ def render():
             st.markdown("**Asset hinzufügen**")
             preset = st.selectbox(
                 "Vordefinierte Auswahl (optional)",
-                ["—", "AAPL.US", "MSFT.US", "NVDA.US", "AMZN.US", "GOOGL.US", "TSLA.US", "SPY.US", "QQQ.US"],
+                ["—", "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "TSLA", "SPY", "QQQ"],
             )
-            custom = st.text_input("Oder eigenes Symbol eingeben", placeholder="z.B. AAPL.US")
+            custom = st.text_input("Oder eigenes Symbol eingeben", placeholder="z.B. AAPL")
 
             custom_value = custom.strip()
             symbol_to_add = custom_value if custom_value else ""

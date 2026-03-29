@@ -2,12 +2,7 @@ import pandas as pd
 
 
 def add_user_friendly_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Erwartet Spalten: date, close
-    Gibt df zurück mit:
-    - price: Preis (close umbenannt)
-    - daily_change_pct: tägliche Veränderung in %
-    """
+    """Kleine Helfer: close umbenennen, tägliche Prozent-Change rechnen."""
     df = df.sort_values("date").copy()
 
     # "close" bleibt intern ok, aber für UI erzeugen wir "price"

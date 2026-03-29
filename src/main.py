@@ -1,21 +1,31 @@
+import logging
 import streamlit as st
 
+from config import load_config
 from db import init_db
+from logging_utils import setup_logging
 from pages import PAGE_RENDERERS
 
 
+config = load_config()
+setup_logging(config)
+logger = logging.getLogger(__name__)
+
 st.set_page_config(page_title="Orus", layout="wide")
 init_db()
+logger.info("App started")
 
 if "page" not in st.session_state:
     st.session_state.page = "Dashboard"
 
 
 def set_page(page_name: str):
+    """Aktualisiere die aktuelle Page in der Session."""
     st.session_state.page = page_name
 
 
 def nav_button(label: str, page_name: str):
+    """Render ein Seiten-Button mit aktivem Zustand."""
     is_active = st.session_state.page == page_name
     st.button(
         label,

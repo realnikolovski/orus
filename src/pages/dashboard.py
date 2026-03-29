@@ -9,6 +9,7 @@ AMOUNT_COL = "Betrag (€)"
 
 
 def _validate_prereqs(assets, target, holdings):
+    """Check, ob alle nötigen Eingaben vorhanden sind."""
     if len(assets) == 0:
         st.info("Start: Gehe zu „Portfolio“ und füge mindestens ein Asset hinzu.")
         return False
@@ -22,6 +23,7 @@ def _validate_prereqs(assets, target, holdings):
 
 
 def _build_drift_data(assets, target, holdings, total_value, drift_threshold_pp, min_trade_eur):
+    """Berechne Abweichungen und Trade-Vorschläge für die Kacheln."""
     drift_rows = []
     suggestions = []
 
@@ -65,6 +67,7 @@ def _build_drift_data(assets, target, holdings, total_value, drift_threshold_pp,
 
 
 def render():
+    """Dashboard-Übersicht mit Ampel und Top-Vorschlägen."""
     header("Orus", "Dashboard – Überblick")
 
     assets = load_assets()

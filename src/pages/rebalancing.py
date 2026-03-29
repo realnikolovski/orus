@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import streamlit as st
 
@@ -5,9 +6,11 @@ from db import load_assets, load_holdings, load_target_weights
 from pages.common import header
 
 AMOUNT_COL = "Betrag (€)"
+logger = logging.getLogger(__name__)
 
 
 def _validate_inputs(assets, target, holdings):
+    """Checke, ob alle Eingaben vorhanden sind, sonst kurzer Hinweis."""
     if len(assets) == 0:
         st.info("Keine Assets vorhanden. Gehe zu „Portfolio“ und füge Symbole hinzu.")
         return False
@@ -21,6 +24,7 @@ def _validate_inputs(assets, target, holdings):
 
 
 def _controls():
+    """UI-Steuerung für Schwellen, Mindesttrade und Modus."""
     with st.container(border=True):
         st.markdown("### Einstellungen (wann soll Orus handeln?)")
         st.write(
@@ -52,6 +56,7 @@ def _controls():
 
 
 def _traffic_status(abs_drift: float, drift_threshold_pp: float) -> str:
+    """Kleine Ampel-Logik anhand der Abweichung."""
     if abs_drift <= drift_threshold_pp:
         return "🟢 OK"
     if abs_drift <= 2 * drift_threshold_pp:
@@ -60,6 +65,7 @@ def _traffic_status(abs_drift: float, drift_threshold_pp: float) -> str:
 
 
 def _action_for_drift(drift_pp: float, trade_eur: float, drift_threshold_pp: float, min_trade_eur: float):
+    """Entscheide Kaufen/Verkaufen/OK inkl. Begründung."""
     abs_drift = abs(drift_pp)
     if abs_drift <= drift_threshold_pp:
         return "OK", "Im Toleranzbereich"
@@ -77,6 +83,7 @@ def _action_for_drift(drift_pp: float, trade_eur: float, drift_threshold_pp: flo
 
 
 def _build_tables(assets, target, holdings, total_portfolio, drift_threshold_pp, min_trade_eur, factor):
+    """Rechne Übersichtstabelle und Vorschläge fürs Rebalancing."""
     overview_rows = []
     suggestions = []
 
@@ -120,6 +127,7 @@ def _build_tables(assets, target, holdings, total_portfolio, drift_threshold_pp,
 
 
 def _render_howto():
+    """Kurze Schritt-für-Schritt-Anleitung einblenden."""
     st.subheader("So setzt du die Vorschläge praktisch um (Schritt-für-Schritt)")
     with st.container(border=True):
         st.markdown(
@@ -132,6 +140,7 @@ def _render_howto():
 
 
 def _render_suggestions(sug_df: pd.DataFrame):
+    """Zeige Trade-Vorschläge sortiert, inkl. Summe Kaufen/Verkaufen."""
     st.subheader("Rebalancing-Vorschläge")
     if sug_df.empty:
         st.success("Keine Trades nötig (alles im Toleranzbereich oder unter Mindestbetrag).")
@@ -152,6 +161,7 @@ def _render_suggestions(sug_df: pd.DataFrame):
 
 
 def render():
+    """Check & Rebalancing Tab mit Tabellen, Export und Logik."""
     header("Orus", "Portfolio-Check & Rebalancing (MVP)")
 
     assets = load_assets()
@@ -174,6 +184,15 @@ def render():
         drift_threshold_pp=drift_threshold_pp,
         min_trade_eur=min_trade_eur,
         factor=factor,
+    )
+    logger.info(
+        "Rebalancing computed",
+        extra={
+            "suggestions": len(sug_df),
+            "assets": len(assets),
+            "drift_threshold_pp": drift_threshold_pp,
+            "min_trade_eur": min_trade_eur,
+        },
     )
 
     st.subheader("Übersicht (Ziel vs. Aktuell)")

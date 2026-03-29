@@ -1,87 +1,76 @@
 # Orus – Portfolio Check & Rebalancing (MVP)
 
-Orus ist eine kleine Streamlit-App zur Analyse eines Portfolios und zur Erkennung von Rebalancing-Bedarf.
-Das Tool vergleicht **Soll-Gewichte (Ziel)** mit **Ist-Investitionen** und zeigt verständlich, wann und wie ein Portfolio angepasst werden sollte.
-
-Das Projekt ist als **MVP (Minimum Viable Product)** aufgebaut und fokussiert auf eine einfache, nachvollziehbare Analyse.
+Orus ist eine Streamlit-App für schnelle Portfolio-Checks: Zielgewichte vs. Ist-Beträge vergleichen, Abweichungen sehen und einfache Rebalancing-Vorschläge erhalten. Fokus: leicht nachvollziehbar, lokal lauffähig, ohne API-Keys.
 
 ---
 
-# Features
+## Features (Kurzfassung)
 
-* Portfolio mit mehreren Assets verwalten
-* Marktdaten automatisch laden
-* Analyse einzelner oder mehrerer Assets
-* Vergleich der Asset-Performance
-* Zielgewichte (Soll) definieren
-* Investierte Beträge (Ist) erfassen
-* Drift-Analyse zwischen Soll und Ist
-* Rebalancing-Vorschläge (Kaufen / Verkaufen)
-* Dashboard mit Portfolio-Übersicht
+- Portfolio-Assets verwalten (Anlegen/Löschen)
+- Kurse per **yfinance** laden und lokal (SQLite) speichern
+- Analyse je Asset oder im Vergleich (interaktive Altair-Charts, 30d-Volatilität)
+- Zielgewichte (Soll) und Ist-Beträge pflegen
+- Drift-Berechnung und Rebalancing-Vorschläge (Kaufen/Verkaufen) mit CSV-Export
+- Dashboard mit Ampelindikatoren und Top-Vorschlägen
+- Logging in Datei und Konsole (konfigurierbar)
 
 ---
 
-# Projektstruktur
+## Stack
+
+- Python 3.10+
+- Streamlit
+- pandas
+- yfinance
+- Altair (Charts)
+- SQLite (lokale DB)
+
+---
+
+## Projektstruktur
 
 ```
 orus/
-│
 ├─ README.md
 ├─ requirements.txt
-├─ orus.db              # SQLite Datenbank
-│
-├─ src/
-│  ├─ main.py             # Hauptanwendung (Streamlit Router)
-│  ├─ db.py               # Datenbankfunktionen
-│  ├─ data_client.py      # Laden von Marktdaten
-│  ├─ analytics.py        # Analysefunktionen
-│  ├─ config.py           # Konfiguration
-│  └─ pages/              # Streamlit-Seiten
-│     ├─ __init__.py
-│     ├─ dashboard.py
-│     ├─ portfolio.py
-│     ├─ holdings.py
-│     ├─ data.py
-│     ├─ weights.py
-│     ├─ rebalancing.py
-│     ├─ analysis.py
-│     └─ common.py
+├─ orus.db              # SQLite Datenbank (wird bei Bedarf angelegt)
+└─ src/
+   ├─ main.py           # App-Start (Streamlit Router + Logging)
+   ├─ config.py         # Basis-Konfig (DB-Pfad, Log-Level/-File)
+   ├─ logging_utils.py  # Logging-Setup
+   ├─ db.py             # DB-Zugriffe
+   ├─ data_client.py    # Kurs-Download via yfinance
+   ├─ analytics.py      # Hilfsfunktionen (z. B. pct_change)
+   └─ pages/            # Streamlit-Seiten
+      ├─ dashboard.py
+      ├─ portfolio.py
+      ├─ data.py
+      ├─ weights.py
+      ├─ holdings.py
+      ├─ rebalancing.py
+      ├─ analysis.py
+      └─ common.py
 ```
 
 ---
 
-# Voraussetzungen
-
-Installiert sein müssen:
-
-* Python **3.10 oder neuer**
-* Git
-
----
-
-# Installation
+## Installation
 
 Repository klonen:
 
 ```bash
-git clone https://github.com/wrxngdev/orus.git
+git clone https://github.com/realnikolovski/orus.git
 cd orus
 ```
 
-Virtuelle Umgebung erstellen (empfohlen):
-
-Mac / Linux:
+Virtuelle Umgebung (empfohlen):
 
 ```bash
-python/python3 -m venv .venv
+python -m venv .venv
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+# Mac/Linux
 source .venv/bin/activate
-```
-
-Windows:
-
-```bash
-python/python3 -m venv .venv
-.venv\Scripts\activate oder .venv\Scripts\activate.ps1
 ```
 
 Abhängigkeiten installieren:
@@ -92,7 +81,7 @@ pip install -r requirements.txt
 
 ---
 
-# Anwendung starten
+## Start der Anwendung
 
 Im Projektordner:
 
@@ -100,65 +89,54 @@ Im Projektordner:
 streamlit run src/main.py
 ```
 
-Die App startet dann automatisch im Browser unter:
+Standard: http://localhost:8501 (Streamlit zeigt den genauen Port an).
 
+---
+
+## Empfohlener Ablauf in der App
+
+1) **Portfolio**: Assets anlegen (Ticker ohne `.US`, z. B. AAPL, NVDA, SPY).
+2) **Daten**: Kurse via yfinance laden und speichern.
+3) **Gewichte (Ziel)**: Soll-Gewichte in % hinterlegen.
+4) **Investiert (Ist)**: Aktuell investierte Euro-Beträge eintragen.
+5) **Check & Rebalancing**: Abweichungen prüfen, Vorschläge einsehen/exportieren.
+6) **Analyse**: Preisverlauf, tägliche Changes, 30d-Volatilität und Multi-Asset-Vergleich.
+
+---
+
+## Konfiguration (optional über Umgebungsvariablen)
+
+- `ORUS_DB_PATH` – Pfad zur SQLite-Datei (Default: `orus.db`).
+- `ORUS_LOG_LEVEL` – Log-Level, z. B. `INFO` oder `DEBUG` (Default: `INFO`).
+- `ORUS_LOG_FILE` – Log-Datei (Default: `orus.log`).
+
+---
+
+## Datenquelle
+
+- Kursdaten: **yfinance** (keine API-Keys nötig). Bitte gängige Ticker ohne `.US` nutzen.
+- Speicherung: lokale SQLite-DB (`prices`, `assets`, `target_weights`, `holdings`).
+
+---
+
+## Entwicklung & Qualität
+
+- Code-Style: flake8
+
+```bash
+python -m flake8 src
 ```
-http://localhost:8501
-```
+
+- Tests: aktuell keine automatischen Tests vorhanden. Manuelle Smoke-Tests über die App (Daten laden → Analyse → Rebalancing) empfohlen.
 
 ---
 
-# Nutzung der App
+## Hinweis (MVP)
 
-Empfohlener Ablauf:
-
-1. **Portfolio**
-
-   * Assets hinzufügen (z. B. Aktien oder ETFs)
-
-2. **Daten**
-
-   * Marktdaten laden / aktualisieren
-
-3. **Gewichte (Ziel)**
-
-   * Zielverteilung des Portfolios festlegen
-
-4. **Investiert (Ist)**
-
-   * Aktuell investierte Beträge eintragen
-
-5. **Check & Rebalancing**
-
-   * Drift zwischen Soll und Ist analysieren
-   * Rebalancing-Vorschläge anzeigen
-
-6. **Analyse**
-
-   * Performance einzelner Assets oder Vergleiche
+Orus ist ein Lern-/Demo-Projekt. Keine Finanzberatung. Daten können unvollständig oder verspätet sein.
 
 ---
 
-# Datenquelle
+## Lizenz
 
-Die historischen Preisdaten werden über öffentliche Marktdaten geladen. (In dem Fall wäre das Stooq)
-Die Daten werden lokal in einer **SQLite-Datenbank** gespeichert.
-
----
-
-# Hinweis (MVP)
-
-Dieses Projekt ist ein **Proof-of-Concept / MVP** und dient zur Demonstration von:
-
-* Portfolioanalyse
-* Rebalancing-Logik
-* einfacher Datenanalyse mit Python
-* Entwicklung einer Streamlit-App
-
-Es handelt sich **nicht um eine Finanzberatung**!.
-
----
-
-# Lizenz
-
-Dieses Projekt ist für Lern- und Demonstrationszwecke gedacht.
+Nur für Lern- und Demonstrationszwecke.

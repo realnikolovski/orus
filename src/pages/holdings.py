@@ -5,6 +5,7 @@ from pages.common import header, safe_float
 
 
 def render():
+    """Ist-Beträge pro Asset eingeben und sichern."""
     header("Orus", "Aktuell investiert (Ist)")
 
     assets = load_assets()

@@ -1,4 +1,6 @@
 streamlit
 pandas
 requests
+yfinance
+altair
 flake8
